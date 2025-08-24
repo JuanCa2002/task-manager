@@ -1,0 +1,10 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer viewLocalizer
+
+<script>
+    // El recurso solicitado no fue encontrad
+    const notFoundResource = "@viewLocalizer["notFoundError"]";
+    //Ha ocurrido un error con su solicitud
+    const unexpectedError = "@viewLocalizer["unexpectedError"]";
+</script>

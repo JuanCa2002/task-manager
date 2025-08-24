@@ -1,0 +1,40 @@
+﻿<div class="modal fade" id="edit-modal-task" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-modal-task-title" data-bind="text: title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="titleSaveTask" 
+                            placeholder="titulo"
+                            autocomplete="off"
+                            data-bind="value: title, event: {change: handlerEditTaskChange}"/>
+                            <label for="titleSaveTask"> Título de la tarea</label>
+                        </div>
+                        <div class="mb-3">
+                            <label>Descripción</label>
+                            <textarea class="form-control" rows="4"
+                                      data-bind="value: description, event: {change: handlerEditTaskChange}">
+                            </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <partial name="_Steps"></partial>
+                        </div>
+                        <div class="mb-3">
+                            <partial name="_AttachedFiles"></partial>
+                        </div>
+                    </div>
+                    <div class="col-lg-1 d-flex justify-content-end">
+                        <button data-bind="{click: showDeleteModal}" class="btn btn-danger mb-2" style="height:fit-content">
+                            <i title="Eliminar Tarea" class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿@using TaskManager.Models.ViewModels
+
+@model UserListViewModel
+
+@{
+    ViewData["Title"] = "Listado de Usuarios";
+    Layout = "../Shared/_Layout";
+}
+
+<h1>Listado de usuarios</h1>
+
+@if(Model.Message is not null)
+{
+    <div class="alert alert-success" role="alert">
+        @Model.Message
+    </div>
+}
+
+@if (Model.Users is not null && Model.Users.Count > 0)
+{
+    <form method="post">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Acciones</td>
+                    <td>Email</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(UserViewModel user in Model.Users)
+                {
+                    <tr>
+                        <td>
+                            <button
+                                class="btn btn-primary me-2"
+                                asp-action="MakeAdmin" 
+                                asp-route-email="@user.Email">
+                                <i title="Hacer Administrador" class="bi bi-person-fill-up"></i>
+                            </button>
+
+                            <button 
+                                    class="btn btn-danger me-2"
+                                    asp-action="RemoveAdmin"
+                                    asp-route-email="@user.Email">
+                                <i title="Remover Administrador" class="bi bi-person-fill-down"></i>
+                            </button>
+                        </td>
+                        <td>
+                            @user.Email
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+}
+else
+{
+    <p>Aun no hay usuarios para mostrar.</p>
+}

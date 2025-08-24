@@ -1,0 +1,37 @@
+﻿<hr />
+<label><i class="bi bi-clipboard-check-fill"></i> Pasos de la tarea</label>
+
+<button class="btn btn-success btn-sm" onclick="handlerClickAddStep()">
+    <i class="bi bi-plus"></i>
+</button>
+
+<div id="reorderable-steps" data-bind="foreach: steps">
+    <div class="mt-2">
+        <div class="row">
+            <div class="col-1">
+                <input type="checkbox" class="form-check-input" name="checkBoxStep"
+                 data-bind="checked: done, attr: {'data-id': id}"/>
+            </div>
+            <div class="col-11">
+                <span style="cursor:pointer;" data-bind="text: description, hidden: editionMode,
+                      css: {'text-decoration-line-through': done},
+                      click: handlerClickStep"></span>
+                <textarea
+                    name="txtDescriptionStep"
+                    class="form-control"
+                    placeholder="Agrege una descripción"
+                    data-bind="value: description, visible: editionMode"></textarea>
+                <div class="mt-2" data-bind="visible: editionMode">
+                    <button class="btn btn-primary" 
+                            data-bind="click: handlerClickSaveStep">Guardar</button>
+                    <button class="btn btn-secondary" 
+                            data-bind="click: handlerClickCancelSaveStep">Cancelar</button>
+                    <button class="btn btn-danger"
+                            data-bind="hidden: isNew, click: handlerClickDeleteStep">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+﻿@using TaskManager.Models.ViewModels
+
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<h1>Regístrate</h1>
+
+<!-- Register Form -->
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Register">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Email Field -->
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" type="email"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" type="password"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <!-- Register And Log In Actions -->
+                <div class="col-12 text-center mb-3">
+                    <button type="submit" class="btn btn-success">Registrarse</button>
+                    <a asp-action="LogIn" class="btn btn-secondary">Iniciar Sesión</a>
+                </div>
+                <hr />
+                <div class="col-12 mt-3 text-center">
+                    <!-- Register With Microsoft Account -->
+                    <a class="btn btn-primary"
+                       asp-action="ExternLogIn"
+                       asp-route-supplier="Microsoft">
+                        Continuar con Microsoft
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+}

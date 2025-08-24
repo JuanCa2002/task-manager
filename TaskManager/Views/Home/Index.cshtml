@@ -1,0 +1,141 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer viewLocalizer
+@{
+    ViewData["Title"] = "Listado Tareas";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@ViewBag.Greeting</h1>
+    <p>
+        @viewLocalizer["SubtitleTextHomePage"]
+    </p>
+</div>
+
+<div class="text-center">
+    <h1 class="display-1"> 
+        @viewLocalizer["MyTasks"]
+    </h1>
+    <button type="button" class="btn btn-success mb-3" onclick="addNewTask()">
+        @viewLocalizer["AddNewTask"]
+    </button>
+</div>
+
+<div id="list-task-container" class="text-center">
+    <div id="reorderable" class="text-start" data-bind="foreach: tasks">
+        <div name="task" class="border mb-2 p-2" style="cursor: move;"
+             data-bind="click: manageTaskClick">
+            <div data-bind="text: title; hidden: isNew" class="fw-bold" style="cursor: pointer;"></div>
+
+            <div name="step-summarys" data-bind="visible: totalSteps() > 0">
+                <span data-bind="text: doneSteps"></span>/<span data-bind="text: totalSteps"></span>
+                <span data-bind="text: doneStepsPercent,
+                               css: {'color-green': totalSteps() === doneSteps(),
+                                    'color-red': totalSteps() !== doneSteps() }">
+                </span>
+            </div>
+
+            <input type="text" name="title" autocomplete="off"
+                   data-bind="value: title, visible: isNew, 
+                              event: {focusout: manageFocusOutTaskTitle},
+                              attr: {'data-id': id}" />
+        </div>
+    </div>
+
+    <div data-bind="visible: loading" class="spinner-border">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+
+    <div data-bind="visible: thereIsNoTasks">
+        No existen tareas para mostrar
+    </div>
+</div>
+
+<partial name="_EditModalTask"></partial>
+
+@section Scripts {
+    <script src="~/js/attached_files.js" asp-append-version="true"></script>
+    <script src="~/js/tasks.js" asp-append-version="true"></script>
+    <script src="~/js/utils.js" asp-append-version="true"></script>
+    <script src="~/js/steps.js" asp-append-version="true"></script>
+    <script>
+
+        const urlTasks = "/api/tasks";
+        const urlSteps = "/api/steps";
+        const urlFiles = "/api/files";
+
+        const editModalTask = document.getElementById("edit-modal-task");
+        const editModalTaskBootstrap = new bootstrap.Modal(editModalTask);
+
+        function taskListViewModelFn() {
+            var self = this;
+            self.tasks = ko.observableArray([]);
+            self.loading = ko.observable(true);
+            self.thereIsNoTasks = ko.pureComputed(function(){
+                if(self.loading()){
+                    return false;
+                }
+
+                return self.tasks().length === 0;
+            })
+        }
+
+        function elementTaskViewModel({id, title, totalSteps, doneSteps}) {
+            var self = this;
+            self.id = ko.observable(id);
+            self.title = ko.observable(title);
+            self.totalSteps = ko.observable(totalSteps);
+            self.doneSteps = ko.observable(doneSteps);
+            self.doneStepsPercent = ko.pureComputed(function(){
+                const percent = Math.round(((self.doneSteps() * 1.0) / self.totalSteps()) * 100);
+                return `(${percent} %)`;
+            })
+            self.isNew = ko.pureComputed(function(){
+                return self.id() === 0;
+            })
+        }
+
+        const editTaskViewModel = {
+            id: 0,
+            title: ko.observable(''),
+            description: ko.observable(''),
+            steps: ko.observableArray([]),
+            attachedFiles: ko.observableArray([])
+        }
+
+        const taskListViewModel = new taskListViewModelFn();
+
+        function stepViewModel({id, description, done, editionMode}) {
+            var self = this;
+            self.id = ko.observable(id || 0),
+            self.description = ko.observable(description || ''),
+            self.previousDescription = '',
+            self.done = ko.observable(done),
+            self.editionMode = ko.observable(editionMode),
+            self.isNew = ko.pureComputed(function(){
+                return self.id() === 0;
+            })
+
+            self.done.subscribe(async function (newValue) {
+                if (!self.isNew()) {
+                    const data = getStepRequestBody(self);
+                    await updateStep(data, self.id());
+                }
+            });
+        }
+
+        function attachedFileViewModel({id, title, published, editionMode, order, url}){
+            var self = this;
+            self.id = id;
+            self.title = ko.observable(title || ''),
+            self.published = published,
+            self.editionMode = ko.observable(editionMode),
+            self.order = order;
+            self.url = url;
+        }
+
+        getTaskList();
+
+        ko.applyBindings(taskListViewModel, document.getElementById("list-task-container"));
+        ko.applyBindings(editTaskViewModel, document.getElementById("edit-modal-task"));
+    </script>
+}
